@@ -1,10 +1,10 @@
 from typing import Any
 from txtree import OperationTree, TreeNode, DataNode, EvalDataNode, ForLoopNode, JoinOperatorNode
-import re
+import regex as re
   
 class TreeBuilder():
   varTokenRegex = r"\${([\w.]+)}"
-  forTokenRegex = r"\${for\(([\w]+:[\w.]+)\)\(([\w\W]*)\)}"
+  forTokenRegex = r"\${(?:for\(([\w]+:[\w.]+)\)\(([^)(]*(?:(?R)[^)(]*)*)\))}"
 
   def buildForLoopNode(self, forExp: str, forBody: str):
     childern: list[TreeNode] = []
