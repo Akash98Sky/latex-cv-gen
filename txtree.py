@@ -39,6 +39,10 @@ class EvalDataNode(DataNode):
     val = dict
     for key in self.data.split('.'):
       val = val[key]
+    if (isinstance(val, str)):
+      escSeqLst = ['$', "#" , '{', '}']
+      for escSeq in escSeqLst:
+        val = val.replace(escSeq, f'\\{escSeq}')
     return DataNode(val)
   
 class ForLoopNode(DataNode):

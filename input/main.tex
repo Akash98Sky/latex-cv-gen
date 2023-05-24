@@ -80,7 +80,6 @@
 %  \homepage{abhinavj004.github.io}
 %  \twitter{@marissamayer}
   \linkedin{${personal.linkedin}}
-  \newline
    \github{${personal.github}} % I'm just making this up though.
   %% You MUST add the academicons option to \documentclass, then compile with LuaLaTeX or XeLaTeX, if you want to use \orcid or other academicons commands.
 %   \orcid{orcid.org/0000-0000-0000-0000}
@@ -102,7 +101,7 @@
 \cvsection[page1sidebar]{Experience}
 
 ${for (exp:work) (
-\cvevent{${exp.position}$}{${exp.company}$}{${exp.date}$}{${exp.location}}
+\cvevent{${exp.position}}{${exp.company}}{${exp.date}}{${exp.location}}
 
 \begin{itemize}
 ${for(desc:exp.description)(
@@ -118,7 +117,7 @@ ${for(desc:exp.description)(
 \cvsection{Projects}
 
 ${for(project:projects)(
-\cvevent{${project.name}}{Self-Learning Project}{${project.date}}{}
+\cvevent{${project.name}}{${project.type}}{${project.date}}{}
 \begin{itemize}
 
 ${for(desc:project.description)(

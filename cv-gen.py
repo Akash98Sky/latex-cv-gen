@@ -25,7 +25,8 @@ if(path.isfile(input_path)):
   io_path_map[input_path] = output_path
 else:
   for file in listdir(input_path):
-    io_path_map[input_path + '/' + file] = output_path + '/' + file
+    if file.endswith(".tex"):
+      io_path_map[input_path + '/' + file] = output_path + '/' + file
 
 
 yaml = DataScv(profile_data_path)
