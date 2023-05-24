@@ -161,4 +161,6 @@ cython_debug/
 
 # Details
 profile-data.yaml
-output.tex
+
+# Output files
+output/*.tex
