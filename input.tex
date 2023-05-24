@@ -101,15 +101,17 @@
 %% \cvsection title in the "main" bar.
 \cvsection[page1sidebar]{Experience}
 
-${for(exp:work)(
-  \cvevent{${exp.position}$}{${exp.company}$}{${exp.date}$}{${exp.location}}
-  \begin{itemize}
-  ${for(desc:exp.description)(
-    \item ${desc}
-  )}
-  \end{itemize}
-  \divider
-  \medskip
+${for (exp:work) (
+\cvevent{${exp.position}$}{${exp.company}$}{${exp.date}$}{${exp.location}}
+
+\begin{itemize}
+${for(desc:exp.description)(
+  \item ${desc}
+)}
+\end{itemize}
+
+\divider
+\medskip
 )}
 
 
@@ -118,8 +120,10 @@ ${for(exp:work)(
 ${for(project:projects)(
 \cvevent{${project.name}}{Self-Learning Project}{${project.date}}{}
 \begin{itemize}
+
 ${for(desc:project.description)(
-\item ${desc})}
+\item ${desc}
+)}
 
 \end{itemize}
 \medskip

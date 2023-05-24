@@ -4,7 +4,7 @@ import regex as re
   
 class TreeBuilder():
   varTokenRegex = r"\${([\w.]+)}"
-  forTokenRegex = r"\${(?:for\(([\w]+:[\w.]+)\)\(([^)(]*(?:(?R)[^)(]*)*)\))}"
+  forTokenRegex = r"\${(?:for[\s]*\([\s]*([\w]+:[\w.]+)[\s]*\)[\s]*\(([^)(]*(?:(?R)[^)(]*)*)\))[\s]*}"
 
   def buildForLoopNode(self, forExp: str, forBody: str):
     childern: list[TreeNode] = []
@@ -15,7 +15,7 @@ class TreeBuilder():
       childern.append(self.buildDataNode(forBody[nonMatchStart:match.start()]))
       # get for loop body and pass it to ForLoopNode
       nestedForExp = match.groups()[0]
-      nestedForBody = match.groups()[1]
+      nestedForBody = str(match.groups()[1]).strip()
       childern.append(self.buildForLoopNode(nestedForExp, nestedForBody))
       nonMatchStart = match.end()
     childern.append(self.buildDataNode(forBody[nonMatchStart:]))
@@ -46,7 +46,7 @@ class TreeBuilder():
       childern.append(self.buildDataNode(data[nonMatchStart:match.start()]))
       # get for loop body and pass it to ForLoopNode
       forExp = match.groups()[0]
-      forBody = match.groups()[1]
+      forBody = str(match.groups()[1]).strip()
       childern.append(self.buildForLoopNode(forExp, forBody))
       nonMatchStart = match.end()
     childern.append(self.buildDataNode(data[nonMatchStart:]))

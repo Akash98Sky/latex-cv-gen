@@ -58,7 +58,7 @@ class ForLoopNode(DataNode):
     for item in list:
       result.append(''.join([str(child.evaluate({**dict, itemVar: item})) for child in self.children]))
 
-    return DataNode(''.join(result))
+    return DataNode('\n'.join(result))
   
 class JoinOperatorNode(DataNode):
   def __init__(self, nodes: list[TreeNode]):
