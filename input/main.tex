@@ -79,8 +79,8 @@
 %  \location{Gwalior, India}
 %  \homepage{abhinavj004.github.io}
 %  \twitter{@marissamayer}
-  \linkedin{${personal.linkedin}}
-   \github{${personal.github}} % I'm just making this up though.
+  \linkedin{\href{http://${personal.linkedin}}{${personal.linkedin}}}
+   \github{\href{http://${personal.github}}{${personal.github}}} % I'm just making this up though.
   %% You MUST add the academicons option to \documentclass, then compile with LuaLaTeX or XeLaTeX, if you want to use \orcid or other academicons commands.
 %   \orcid{orcid.org/0000-0000-0000-0000}
 }
@@ -104,20 +104,19 @@ ${for (exp:work) (
 \cvevent{${exp.position}}{${exp.company}}{${exp.date}}{${exp.location}}
 
 \begin{itemize}
-${for(desc:exp.description)(
-  \item ${desc}
-)}
-\end{itemize}
 
-\divider
-\medskip
+${for(desc:exp.description)(
+\item ${desc}
+)}
+
+\end{itemize}
 )}
 
 
 \cvsection{Projects}
 
 ${for(project:projects)(
-\cvevent{${project.name}}{${project.type}}{${project.date}}{}
+\cvevent{\printinfo{${project.name}}{\href{${project.url}}{\homepagesymbol}}}{${project.type}}{${project.date}}{}
 \begin{itemize}
 
 ${for(desc:project.description)(
@@ -125,8 +124,6 @@ ${for(desc:project.description)(
 )}
 
 \end{itemize}
-\medskip
-\divider
 )}
 
 % Adapted from @Jake's answer from http://tex.stackexchange.com/a/82729/226

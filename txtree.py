@@ -40,7 +40,7 @@ class EvalDataNode(DataNode):
     for key in self.data.split('.'):
       val = val[key]
     if (isinstance(val, str)):
-      escSeqLst = ['$', "#" , '{', '}']
+      escSeqLst = ['$', "#" , '{', '}', '&']
       for escSeq in escSeqLst:
         val = val.replace(escSeq, f'\\{escSeq}')
     return DataNode(val)
