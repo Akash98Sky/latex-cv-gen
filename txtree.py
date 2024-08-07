@@ -1,5 +1,7 @@
 from typing import Any
-from log import debug_print
+from log import getLogger
+
+logger = getLogger(__name__)
 
 
 class TreeNode:
@@ -38,6 +40,8 @@ class EvalDataNode(DataNode):
   def evaluate(self, dict: dict[str, Any]):
     val = dict
     for key in self.data.split('.'):
+      if key not in val:
+        raise ValueError(f'"{key}" not found in dict keys {[key for key in val]}')
       val = val[key]
     if (isinstance(val, str)):
       escSeqLst = ['$', "#" , '{', '}', '&']
@@ -88,7 +92,6 @@ class OperationTree():
 
   def set(self, root: DataNode):
     self.root = root
-    debug_print(self.root)
 
   def execute(self, dict: dict[str, Any], node = None):
     if (node == None):

@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
-from typing import Any
 from os import path, listdir
 from services import DataScv
 from txparser import Parser
-from log import debug_on, debug_print
+from log import debug_on
 import argparse
+from pdf_latex import PDFLatexConverter
+from log import getLogger
 
 # debug_on()
+logger = getLogger(__name__)
 
 parser = argparse.ArgumentParser(description="Generate CV from tex file")
 
@@ -17,15 +19,23 @@ parser.add_argument("-o", "--output", help="path to output file or directory", d
 args = parser.parse_args()
 
 profile_data_path = args.profile
-input_path = args.input
-output_path = args.output
+input_path: str = args.input
+output_path: str = args.output
 io_path_map: dict[str, str] = {}
+
+if not path.isfile(profile_data_path):
+  logger.error("Profile file not found!")
+if not path.exists(input_path):
+  logger.error("Input path not found!")
+if not path.exists(output_path):
+  logger.error("Output path not found!")
+
 
 if(path.isfile(input_path)):
   io_path_map[input_path] = output_path
 else:
   for file in listdir(input_path):
-    if file.endswith(".tex"):
+    if file.endswith(".tex") or file.endswith(".cls"):
       io_path_map[input_path + '/' + file] = output_path + '/' + file
 
 
@@ -37,7 +47,7 @@ for input_file_path, output_file_path in io_path_map.items():
   #load tex file
   with open(input_file_path, "r") as tex_file:
     tex = tex_file.read()
-    debug_print("tex file loaded")
+    logger.debug("tex file loaded")
 
     #parse tex file
     parser = Parser()
@@ -48,6 +58,9 @@ for input_file_path, output_file_path in io_path_map.items():
     with open(output_file_path, "w") as output_file:
       output_file.write(str(output))
 
-      debug_print(output_file_path + ": file written!")
+      logger.debug(output_file_path + ": file written!")
       
-print("Done!")
+converter = PDFLatexConverter('main.tex', tex_dir=output_path)
+converter.convert_to_pdf(output_path)
+
+logger.info("Done!")

@@ -1,7 +1,8 @@
 from typing import Any
-from log import debug_print
 import yaml
+from log import getLogger
 
+logger = getLogger(__name__)
 
 class DataScv:
   def __init__(self, path: str):
@@ -11,7 +12,7 @@ class DataScv:
   def load_yaml(self):
     with open(self.path, "r") as stream:
       try:
-        debug_print('Reading File: ' + self.path + '...')
+        logger.debug('Reading File: ' + self.path + '...')
         self.yaml_data.update(yaml.safe_load(stream))
       except yaml.YAMLError as exc:
         print(exc)

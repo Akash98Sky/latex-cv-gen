@@ -17,11 +17,13 @@ education:
     date: Nov 2020 - Jul 2022
     institute: Jadavpur University
     location: Kolkata, India
+    score: 8.9
 
   - degree: B.Tech in Computer Science and Engineering
     date: Aug 2016 - Jun 2020
     institute: Techno Main Salt Lake
     location: Kolkata, India
+    score: 8.22
 
 work:
   - company: Optum
@@ -47,6 +49,7 @@ work:
 
 projects:
   - name: Society For Heritage, Archaeology & Management
+    type: 'x'
     date: Sep 2020 - Jun 2021
     stack: React, Node.js, Express.js, MongoDB, Material UI, AWS
     description:
@@ -55,6 +58,7 @@ projects:
 
   - name: Weller
     date: Jan 2022
+    type: ''
     stack: React, opencv-js, mediapipe-js
     description:
      - A wellness app where you can check and monitor your health and wellness based on posture and facial movements.
@@ -62,6 +66,7 @@ projects:
 
   - name: Unschool
     date: Aug 2021 - Dec 2021
+    type: ''
     stack: Flutter, Node.js, Express.js, MongoDB, AWS
     description:
      - A life-long learning community platform where people help each other and get rewarded.

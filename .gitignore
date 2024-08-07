@@ -163,4 +163,5 @@ cython_debug/
 profile-data.yaml
 
 # Output files
-output/*.tex
+output/
+!output/.gitignore
