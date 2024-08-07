@@ -7,9 +7,9 @@ $ python3 -m pip install -r requirements.txt
 
 ## Run the cv-gen script
 ```shell
-$ python3 cv-gen.py -p profile-data.yaml -i input.tex
+$ python3 cv-gen.py -p profile-data.yaml -i input
 ```
-[Note: Replace `profile-data.yaml` with your data file path, and `input.tex` with your input file path.]
+[Note: Replace `profile-data.yaml` with your data file path, and `input` with your input directory path of the tex files.]
 
 
 ## Syntax
