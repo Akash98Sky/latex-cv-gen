@@ -27,7 +27,7 @@ async def get_templates(db: DbSvc = Depends(DbSvc)):
     return await db.get_templates()
 
 @router.get("/{template_id}")
-async def get_template(template_id: int, db: DbSvc = Depends(DbSvc)):
+async def get_template(template_id: str, db: DbSvc = Depends(DbSvc)):
     template = await db.get_template(template_id)
 
     if not template:
@@ -36,7 +36,7 @@ async def get_template(template_id: int, db: DbSvc = Depends(DbSvc)):
     return template
 
 @router.post("/{template_id}/generate")
-async def generate_cv(template_id: int, data: dict[str, Any] = Body(), db: DbSvc = Depends(DbSvc)):
+async def generate_cv(template_id: str, data: dict[str, Any] = Body(), db: DbSvc = Depends(DbSvc)):
     template = await db.get_template(template_id, populate_content=True)
 
     if not template:

@@ -1,7 +1,7 @@
 // database
 datasource db {
-    provider = "sqlite"
-    url      = "file:database.db"
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
 }
 
 // generator
@@ -12,7 +12,7 @@ generator client {
 
 // data models
 model Template {
-    id         Int    @id @default(autoincrement())
+    id         String @id @default(auto()) @map("_id") @db.ObjectId
     title      String @unique
     entrypoint String
 
@@ -21,25 +21,25 @@ model Template {
 }
 
 model TemplateFile {
-    id          Int @id @default(autoincrement())
-    template_id Int
-    file_id     Int @unique
+    id          String @id @default(auto()) @map("_id") @db.ObjectId
+    template_id String @db.ObjectId
+    file_id     String @db.ObjectId @unique
 
     template Template @relation(fields: [template_id], references: [id])
     file     FileObj  @relation(fields: [file_id], references: [id])
 }
 
 model SampleFile {
-    id          Int @id @default(autoincrement())
-    template_id Int @unique
-    file_id     Int @unique
+    id          String @id @default(auto()) @map("_id") @db.ObjectId
+    template_id String @db.ObjectId @unique
+    file_id     String @db.ObjectId @unique
 
     template Template @relation(fields: [template_id], references: [id])
     file     FileObj  @relation(fields: [file_id], references: [id])
 }
 
 model FileObj {
-    id           Int    @id @default(autoincrement())
+    id           String @id @default(auto()) @map("_id") @db.ObjectId
     name         String
     content_type String
     content      Bytes

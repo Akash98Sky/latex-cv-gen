@@ -19,7 +19,7 @@ async def upload_file(file: UploadFile = File(...), db: DbSvc = Depends(DbSvc)):
     )
     
 @router.get("/{file_id}")
-async def get_file(file_id: int, db: DbSvc = Depends(DbSvc)):
+async def get_file(file_id: str, db: DbSvc = Depends(DbSvc)):
     file = await db.get_file(file_id)
     if not file:
         raise HTTPException(status_code=404, detail="File not found")

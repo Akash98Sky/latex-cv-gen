@@ -31,7 +31,7 @@ class DbSvc:
             )
         )
     
-    async def get_file(self, file_id: int):
+    async def get_file(self, file_id: str):
         return await self.db.fileobj.find_unique(
             where={
                 'id': file_id
@@ -90,7 +90,7 @@ class DbSvc:
     async def get_templates(self):
         return await self.db.template.find_many()
     
-    async def get_template(self, template_id: int, populate_content: bool = False):
+    async def get_template(self, template_id: str, populate_content: bool = False):
         return await self.db.template.find_unique(
             where={
                 'id': template_id
