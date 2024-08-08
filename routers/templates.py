@@ -1,3 +1,4 @@
+import json
 import os
 from typing import Any
 from fastapi import APIRouter, Body, Depends, File, Form, HTTPException, Response, UploadFile
@@ -20,7 +21,35 @@ async def upload_template(
     ):
     if len(files) == 0:
         raise HTTPException(status_code=400, detail="Template has no files")
-    return await db.create_template(name, entrypoint, files, sample_data)
+    elif sample_data and sample_data.content_type not in ['application/json', 'application/x-json']:
+        raise HTTPException(status_code=400, detail="Sample data must be a JSON file")
+    
+    data = None
+    pdf = None
+    if sample_data:
+        data_bin = await sample_data.read()
+        data = json.loads(data_bin.decode())
+        parser = Parser()
+        with TemporaryDirectory() as tmpdir:
+            for templatefile in files:
+                filename = str(templatefile.filename)
+                tex_template = await templatefile.read()
+                with open(os.path.join(tmpdir, filename), 'w') as f:
+                    # parse tex file
+                    parser.generate(tex_template.decode())
+                    # render the template with profile data
+                    tex_compiled = str(parser.exec(data))
+                    # write to output file
+                    f.write(tex_compiled)
+            
+            latex_converter = PDFLatexConverter(entrypoint, tmpdir)
+            latex_converter.convert_to_pdf(tmpdir)
+            pdf_file = entrypoint.replace('.tex', '.pdf')
+
+            with open(os.path.join(tmpdir, pdf_file), 'rb') as f:
+                pdf = f.read()
+    
+    return await db.create_template(name, entrypoint, files, data, pdf)
 
 @router.get("")
 async def get_templates(db: DbSvc = Depends(DbSvc)):
@@ -28,12 +57,26 @@ async def get_templates(db: DbSvc = Depends(DbSvc)):
 
 @router.get("/{template_id}")
 async def get_template(template_id: str, db: DbSvc = Depends(DbSvc)):
-    template = await db.get_template(template_id)
+    template = await db.get_template(template_id, populate_sample=True)
 
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")
     
     return template
+
+@router.get("/{template_id}/sample")
+async def sample_cv(template_id: str, db: DbSvc = Depends(DbSvc)):
+    sample = await db.get_sample(template_id)
+
+    if not sample or not sample.file:
+        raise HTTPException(status_code=404, detail="Sample not found")
+    
+    return Response(
+        content=sample.file.content.decode(),
+        media_type='application/pdf',
+        headers={'Content-Disposition': f'attachment; filename="{sample.file.name}"'},
+        status_code=200
+    )
 
 @router.post("/{template_id}/generate")
 async def generate_cv(template_id: str, data: dict[str, Any] = Body(), db: DbSvc = Depends(DbSvc)):

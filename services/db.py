@@ -1,5 +1,6 @@
+from typing import Any
 from fastapi import UploadFile
-from prisma import Base64, Prisma
+from prisma import Base64, Json, Prisma
 from prisma.types import (
     TemplateCreateInput,
     TemplateCreateNestedWithoutRelationsInput,
@@ -38,7 +39,7 @@ class DbSvc:
             }
         )
 
-    async def create_template(self, name: str, entrypoint: str, files: list[UploadFile], sample_data: UploadFile | None):
+    async def create_template(self, name: str, entrypoint: str, files: list[UploadFile], sample_data: dict[str, Any] | None, sample_pdf: bytes | None):
         batch = self.db.batch_()
 
         batch.template.create(TemplateCreateInput(
@@ -55,6 +56,7 @@ class DbSvc:
             batch.templatefile.create(
                 data=TemplateFileCreateInput(
                     template=template_ref,
+                    filename=str(file.filename),
                     file=FileObjCreateNestedWithoutRelationsInput(
                         create=FileObjCreateWithoutRelationsInput(
                             name=str(file.filename),
@@ -65,17 +67,16 @@ class DbSvc:
                 )
             )
 
-        if sample_data:
-            file_buffer = await sample_data.read()
-            mime_type = magic.from_buffer(file_buffer, mime=True)
+        if sample_data and sample_pdf:
             batch.samplefile.create(
                 data=SampleFileCreateInput(
                     template=template_ref,
+                    data=Json(sample_data),
                     file=FileObjCreateNestedWithoutRelationsInput(
                         create=FileObjCreateWithoutRelationsInput(
-                            name=str(sample_data.filename),
-                            content_type=mime_type,
-                            content=Base64.encode(file_buffer),
+                            name='sample.pdf',
+                            content_type='application/pdf',
+                            content=Base64.encode(sample_pdf),
                         )
                     )
                 )
@@ -90,13 +91,19 @@ class DbSvc:
     async def get_templates(self):
         return await self.db.template.find_many()
     
-    async def get_template(self, template_id: str, populate_content: bool = False):
+    async def get_template(self, template_id: str, populate_content: bool = False, populate_sample: bool = False):
         return await self.db.template.find_unique(
             where={
                 'id': template_id
             },
             include=TemplateInclude(
                 files={ 'include': { 'file': populate_content } },
-                sample={ 'include': { 'file': populate_content } },
+                sample={ 'include': { 'file': populate_sample } },
             )
+        )
+    
+    async def get_sample(self, template_id: str):
+        return await self.db.samplefile.find_unique(
+            where={ 'template_id': template_id },
+            include={ 'file': True }
         )

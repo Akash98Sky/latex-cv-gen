@@ -15,6 +15,7 @@ model Template {
     id         String @id @default(auto()) @map("_id") @db.ObjectId
     title      String @unique
     entrypoint String
+    created_at DateTime @default(now())
 
     files  TemplateFile[]
     sample SampleFile?
@@ -22,6 +23,7 @@ model Template {
 
 model TemplateFile {
     id          String @id @default(auto()) @map("_id") @db.ObjectId
+    filename    String
     template_id String @db.ObjectId
     file_id     String @db.ObjectId @unique
 
@@ -33,6 +35,7 @@ model SampleFile {
     id          String @id @default(auto()) @map("_id") @db.ObjectId
     template_id String @db.ObjectId @unique
     file_id     String @db.ObjectId @unique
+    data        Json
 
     template Template @relation(fields: [template_id], references: [id])
     file     FileObj  @relation(fields: [file_id], references: [id])
