@@ -1,0 +1,49 @@
+// database
+datasource db {
+    provider = "sqlite"
+    url      = "file:database.db"
+}
+
+// generator
+generator client {
+    provider             = "prisma-client-py"
+    recursive_type_depth = 5
+}
+
+// data models
+model Template {
+    id         Int    @id @default(autoincrement())
+    title      String @unique
+    entrypoint String
+
+    files  TemplateFile[]
+    sample SampleFile?
+}
+
+model TemplateFile {
+    id          Int @id @default(autoincrement())
+    template_id Int
+    file_id     Int @unique
+
+    template Template @relation(fields: [template_id], references: [id])
+    file     FileObj  @relation(fields: [file_id], references: [id])
+}
+
+model SampleFile {
+    id          Int @id @default(autoincrement())
+    template_id Int @unique
+    file_id     Int @unique
+
+    template Template @relation(fields: [template_id], references: [id])
+    file     FileObj  @relation(fields: [file_id], references: [id])
+}
+
+model FileObj {
+    id           Int    @id @default(autoincrement())
+    name         String
+    content_type String
+    content      Bytes
+
+    template TemplateFile?
+    sample   SampleFile?
+}

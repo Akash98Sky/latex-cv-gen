@@ -1,5 +1,5 @@
 from typing import Any
-from txtree import OperationTree, TreeNode, DataNode, EvalDataNode, ForLoopNode, JoinOperatorNode
+from services.parser.txtree import OperationTree, TreeNode, DataNode, EvalDataNode, ForLoopNode, JoinOperatorNode
 import regex as re
   
 class TreeBuilder():

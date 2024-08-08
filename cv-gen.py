@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 from os import path, listdir
-from services import DataScv
-from txparser import Parser
-from log import debug_on
 import argparse
-from pdf_latex import PDFLatexConverter
-from log import getLogger
+
+from helpers.data import ProfileData
+from helpers.pdf_latex import PDFLatexConverter
+from helpers.log import getLogger, debug_on
+from services.parser import Parser
 
 # debug_on()
 logger = getLogger(__name__)
@@ -39,9 +39,8 @@ else:
       io_path_map[input_path + '/' + file] = output_path + '/' + file
 
 
-yaml = DataScv(profile_data_path)
-
-yaml.load_yaml()
+profile = ProfileData(profile_data_path)
+profile.load_data()
 
 for input_file_path, output_file_path in io_path_map.items():
   #load tex file
@@ -52,7 +51,7 @@ for input_file_path, output_file_path in io_path_map.items():
     #parse tex file
     parser = Parser()
     parser.generate(tex)
-    output = parser.exec(yaml.get_data())
+    output = parser.exec(profile.get_data())
 
     #write to output file
     with open(output_file_path, "w") as output_file:

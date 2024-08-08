@@ -165,3 +165,6 @@ profile-data.yaml
 # Output files
 output/
 !output/.gitignore
+
+# Local DB
+database.db

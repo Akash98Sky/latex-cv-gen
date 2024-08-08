@@ -10,11 +10,14 @@ RUN apt-get update && \
 WORKDIR /app
 
 COPY requirements.txt .
-
 RUN pip install -r requirements.txt
+
+COPY schema.prisma .
+RUN prisma generate
 
 COPY . .
 
-# keep the container running by some magic
-ENTRYPOINT ["tail"]
-CMD ["-f","/dev/null"]
+EXPOSE 80
+
+# run the fastapi server
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]

@@ -1,7 +1,7 @@
 import subprocess
 import os
 from tempfile import TemporaryDirectory
-from log import getLogger
+from helpers.log import getLogger
 
 logger = getLogger(__name__)
 

@@ -1,3 +1,9 @@
 pyyaml
 regex
 argparse
+fastapi
+python-multipart
+uvicorn
+prisma
+python-magic
+orjson
