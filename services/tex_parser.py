@@ -12,7 +12,6 @@ class ParsedTemplate:
         return self.env.list_templates()
 
     async def render(self, file: str, data: dict[str, Any]) -> str:
-        print(file)
         return await self.env.get_template(file).render_async(data)
 
 class TexParser:
@@ -45,7 +44,6 @@ class TexParser:
             variable_start_string= '${',
             variable_end_string= '}',
             line_statement_prefix= '$#',
-            line_comment_prefix= '%',
             comment_start_string= '\\iffalse',
             comment_end_string= '\\fi',
             trim_blocks=True,

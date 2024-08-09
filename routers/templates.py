@@ -4,6 +4,7 @@ from typing import Any
 from fastapi import APIRouter, Body, Depends, File, Form, HTTPException, Response, UploadFile
 from tempfile import TemporaryDirectory
 
+from helpers.data import sanitize_data
 from helpers.pdf_latex import PDFLatexConverter
 from services.db import DbSvc
 from services.tex_parser import TexParser
@@ -29,6 +30,7 @@ async def upload_template(
     if sample_data:
         data_bin = await sample_data.read()
         data = json.loads(data_bin.decode())
+        sanitize_data(data)
         with TemporaryDirectory() as tmpdir:
             async with TexParser(files) as parsed:
                 for template in parsed.templates():
@@ -83,6 +85,7 @@ async def generate_cv(template_id: str, data: dict[str, Any] = Body(), db: DbSvc
     elif not template.files:
         raise HTTPException(status_code=400, detail="Template has no files")
 
+    sanitize_data(data)
     with TemporaryDirectory() as tmpdir:
         async with TexParser(template.files) as parsed:
             for tex_template in parsed.templates():
