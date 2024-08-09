@@ -6,7 +6,7 @@ from tempfile import TemporaryDirectory
 
 from helpers.pdf_latex import PDFLatexConverter
 from services.db import DbSvc
-from services.parser import Parser
+from services.tex_parser import TexParser
 
 
 router = APIRouter(prefix="/templates", tags=["templates"])
@@ -29,18 +29,14 @@ async def upload_template(
     if sample_data:
         data_bin = await sample_data.read()
         data = json.loads(data_bin.decode())
-        parser = Parser()
         with TemporaryDirectory() as tmpdir:
-            for templatefile in files:
-                filename = str(templatefile.filename)
-                tex_template = await templatefile.read()
-                with open(os.path.join(tmpdir, filename), 'w') as f:
-                    # parse tex file
-                    parser.generate(tex_template.decode())
-                    # render the template with profile data
-                    tex_compiled = str(parser.exec(data))
-                    # write to output file
-                    f.write(tex_compiled)
+            async with TexParser(files) as parsed:
+                for template in parsed.templates():
+                    filename = str(template)
+                    tex_compiled = await parsed.render(template, data)
+                    with open(os.path.join(tmpdir, filename), 'w') as f:
+                        # write to output file
+                        f.write(tex_compiled)
             
             latex_converter = PDFLatexConverter(entrypoint, tmpdir)
             latex_converter.convert_to_pdf(tmpdir)
@@ -87,21 +83,14 @@ async def generate_cv(template_id: str, data: dict[str, Any] = Body(), db: DbSvc
     elif not template.files:
         raise HTTPException(status_code=400, detail="Template has no files")
 
-    parser = Parser()
     with TemporaryDirectory() as tmpdir:
-        for templatefile in template.files:
-            if templatefile.file is None:
-                continue
-
-            filename = templatefile.file.name
-            tex_template = templatefile.file.content.decode_str()
-            with open(os.path.join(tmpdir, filename), 'w') as f:
-                # parse tex file
-                parser.generate(tex_template)
-                # render the template with profile data
-                tex_compiled = str(parser.exec(data))
-                # write to output file
-                f.write(tex_compiled)
+        async with TexParser(template.files) as parsed:
+            for tex_template in parsed.templates():
+                filename = str(tex_template)
+                tex_compiled = await parsed.render(tex_template, data)
+                with open(os.path.join(tmpdir, filename), 'w') as f:
+                    # write to output file
+                    f.write(tex_compiled)
             
         latex_converter = PDFLatexConverter(template.entrypoint, tmpdir)
         latex_converter.convert_to_pdf(tmpdir)

@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
+import asyncio
 from os import path, listdir
 import argparse
+from typing import Any
 
 from helpers.data import ProfileData
 from helpers.pdf_latex import PDFLatexConverter
 from helpers.log import getLogger, debug_on
-from services.parser import Parser
+from services.tex_parser import TexParser
 
 # debug_on()
 logger = getLogger(__name__)
@@ -31,35 +33,26 @@ if not path.exists(output_path):
   logger.error("Output path not found!")
 
 
-if(path.isfile(input_path)):
-  io_path_map[input_path] = output_path
-else:
-  for file in listdir(input_path):
-    if file.endswith(".tex") or file.endswith(".cls"):
-      io_path_map[input_path + '/' + file] = output_path + '/' + file
+async def generate_cv(data: dict[str, Any]):
+  async with TexParser(templates_dir=input_path) as parsed:
+    for input_file in parsed.templates():
+      #load tex file
+      tex_output = await parsed.render(input_file, data)
+      logger.debug("tex file loaded")
+
+      #write to output file
+      output_file_path = output_path + '/' + input_file
+      with open(output_file_path, "w") as output_file:
+        output_file.write(tex_output)
+
+        logger.debug(output_file_path + ": file written!")
+        
+  converter = PDFLatexConverter('main.tex', tex_dir=output_path)
+  converter.convert_to_pdf(output_path)
 
 
-profile = ProfileData(profile_data_path)
-profile.load_data()
-
-for input_file_path, output_file_path in io_path_map.items():
-  #load tex file
-  with open(input_file_path, "r") as tex_file:
-    tex = tex_file.read()
-    logger.debug("tex file loaded")
-
-    #parse tex file
-    parser = Parser()
-    parser.generate(tex)
-    output = parser.exec(profile.get_data())
-
-    #write to output file
-    with open(output_file_path, "w") as output_file:
-      output_file.write(str(output))
-
-      logger.debug(output_file_path + ": file written!")
-      
-converter = PDFLatexConverter('main.tex', tex_dir=output_path)
-converter.convert_to_pdf(output_path)
-
-logger.info("Done!")
+if __name__ == "__main__":
+  profile = ProfileData(profile_data_path)
+  profile.load_data()
+  asyncio.run(generate_cv(profile.data))
+  logger.info("Done!")

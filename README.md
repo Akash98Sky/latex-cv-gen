@@ -1,4 +1,4 @@
-# latex-cv-gen
+# LaTeX CV Gen
 
 ## Install python packages
 ```shell
@@ -30,7 +30,7 @@ Output
 ```
 
 ### Repetitive content generation
-Use `${for(<item name>:<iterator field path>)(Any <content> with ${<item name>} inside)}` to repeat the content over the iterator.
+Use `${# for <item name> in <iterator field path> #} ... ${<item name>} ... ${# endfor #}` to repeat the content over the iterator.
 
 e.g.
 
@@ -38,16 +38,16 @@ Input
 ```latex
 \cvsection[page1sidebar]{Experience}
 
-${for(exp:work)(
+${# for exp in work #}
 \cvevent{${exp.position}$}{${exp.company}$}{${exp.date}$}{${exp.location}}
 \begin{itemize}
-${for(desc:exp.description)(
+${# for desc in exp.description #}
   \item ${desc}
-)}
+${# endfor #}
 \end{itemize}
 \divider
 \medskip
-)}
+${# endfor #}
 ```
 Output
 ```latex

@@ -2,28 +2,28 @@
 
 \cvsection{Education}
 
-${for(ed:education)(
+$# for ed in education
   \cvevent{${ed.degree}}{${ed.institute} - ${ed.location}}{${ed.date} \hspace{1 cm} CGPA:${ed.score}}{}
   \smallskip
-)}
+$# endfor
 
 
 
 \cvsection{Skills}
 \smallskip
 
-${for(skill:skills.proficient)(
+$# for skill in skills.proficient
   \cvtag{${skill}}
-)}
-${for(skill:skills.frameworks)(
+$# endfor
+$# for skill in skills.frameworks
   \cvtag{${skill}}
-)}
-${for(skill:skills.tools)(
+$# endfor
+$# for skill in skills.tools
   \cvtag{${skill}}
-)}
-${for(skill:skills.familiar)(
+$# endfor
+$# for skill in skills.familiar
   \cvtag{${skill}}
-)}
+$# endfor
 
 
 
@@ -31,9 +31,9 @@ ${for(skill:skills.familiar)(
 \smallskip
 \begin{itemize}
 
-  ${for(achievement:achievements)(
+  ${# for achievement in achievements #}
     \item ${achievement}
     \smallskip
-  )}
+  ${# endfor #}
 
 \end{itemize}

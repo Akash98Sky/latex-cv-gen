@@ -100,31 +100,31 @@
 %% \cvsection title in the "main" bar.
 \cvsection[page1sidebar]{Experience}
 
-${for (exp:work) (
+$# for exp in work
 \cvevent{${exp.position}}{${exp.company}}{${exp.date}}{${exp.location}}
 
 \begin{itemize}
 
-${for(desc:exp.description)(
+$# for desc in exp.description
 \item ${desc}
-)}
+$# endfor
 
 \end{itemize}
-)}
+$# endfor
 
 
 \cvsection{Projects}
 
-${for(project:projects)(
+$# for project in projects
 \cvevent{\printinfo{${project.name}}{\href{${project.website}}{\homepagesymbol}}}{${project.type}}{${project.date}}{}
 \begin{itemize}
 
-${for(desc:project.description)(
+$# for desc in project.description
 \item ${desc}
-)}
+$# endfor
 
 \end{itemize}
-)}
+$# endfor
 
 % Adapted from @Jake's answer from http://tex.stackexchange.com/a/82729/226
 % \wheelchart{outer radius}{inner radius}{
