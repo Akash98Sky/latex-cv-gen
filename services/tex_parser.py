@@ -33,6 +33,8 @@ class TexParser:
                     template_map[template.filename] = template.file.content.decode_str() if template.file else ''
                 else:
                     template_bin = await template.read()
+                    # reset the cursor to the beginning
+                    await template.seek(0)
                     template_str = template_bin.decode()
                     template_map[str(template.filename)] = template_str
             loader = DictLoader(template_map)
